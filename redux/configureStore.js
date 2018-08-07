@@ -3,6 +3,7 @@ import { persistStore, persistCombineReducers } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import thunk from "redux-thunk";
 import user from "./modules/user";
+import photos from './modules/photos';
 
 
 
@@ -17,7 +18,8 @@ const persistConifg = {
 
 
 const reducer = persistCombineReducers(persistConifg,{
-    user
+    user,
+    photos
 });
 
 

@@ -1,8 +1,21 @@
-import React from "react";
-import { View, Text } from "react-native";
+import { connect } from "react-redux";
+import Container from "./container";
+import { actionCreators as photoActions } from "../../redux/modules/photos";
 
-const FeedScreen = props => <Text onPress={() => props.navigation.navigate("TakePhoto")}>Feed</Text>;
+const mapStateToProps = (state,ownProps) => {
+    const { photos: { feed } } = state;
+    return {
+        feed
+    }
+};
 
 
-export default FeedScreen;
+const mapDispatchToProps = (dispatch,ownProps) => {
+    return {
+        getFeed: () => {
+            dispatch(photoActions.getFeed());
+        }
+    }
+};
 
+export default connect(mapStateToProps,mapDispatchToProps)(Container);

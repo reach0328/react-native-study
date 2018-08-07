@@ -9,6 +9,7 @@ import { Facebook } from "expo";
 const LOG_IN = "LOG_IN";
 const LOG_OUT = "LOG_OUT";
 const SET_USER = "SET_USER";
+const SET_NOTIFICATIONS = "SET_NOTIFICATIONS";
 // Action creator
 
 function setLogIn(token) {
@@ -18,7 +19,7 @@ function setLogIn(token) {
     }
 }
 
-function setLogOut() {
+function logOut() {
     return {
         type: LOG_OUT
     }
@@ -30,6 +31,14 @@ function setUser(user) {
         user
     }
 }
+
+function setNotification(notifications) {
+    return {
+        type: SET_NOTIFICATIONS,
+        notifications
+    }
+}
+
 
 // api actions
 function login(username, password) {
@@ -90,6 +99,48 @@ function facebookLogin() {
 
 }
 
+function getNotifications() {
+    return (dispatch, getState) => {
+        const { user : { token }} = getState();
+        fetch(`${API_URL}/notifications/`,{
+            headers: {
+                Authorization: `JWT ${token}`
+            }
+        })
+            .then(response => {
+                if(response.status === 401) {
+                    dispatch(logOut());
+                } else {
+                    return response.json();
+                }
+            })
+            .then(json => {
+                dispatch(setNotification(json));
+            })
+    }
+}
+
+
+function getOwnProfile() {
+    return (dispatch, getState) => {
+        const { user : { token,profile: { username } }} = getState();
+        fetch(`${API_URL}/users/${username}/`,{
+            headers: {
+                Authorization: `JWT ${token}`
+            }
+        })
+            .then(response => {
+                if(response.status === 401) {
+                    dispatch(logOut());
+                } else {
+                    return response.json();
+                }
+            })
+            .then(json => {
+                dispatch(setUser(json));
+            })
+    }
+}
 
 // initilal state
 const initialState = {
@@ -99,6 +150,8 @@ const initialState = {
 
 // reducer
 
+
+
 function reducer(state = initialState, action) {
     switch (action.type) {
         case LOG_IN:
@@ -107,6 +160,8 @@ function reducer(state = initialState, action) {
             return applyLogOut(state,action);
         case SET_USER:
             return applySetUser(state,action);
+        case SET_NOTIFICATIONS:
+            return applySetNofications(state,action);
         default:
             return state;
     }
@@ -138,14 +193,27 @@ function applySetUser(state,action) {
         profile: user
     }
 }
+
+function applySetNofications(state, action) {
+    const { notifications } = action;
+    return {
+        ...state,
+        notifications
+    }
+}
+
+
 // export
 
-const actionCreator = {
+const actionCreators = {
     login,
-    facebookLogin
+    facebookLogin,
+    logOut,
+    getNotifications,
+    getOwnProfile
 };
 
-export { actionCreator };
+export { actionCreators };
 
 //default reducer export
 

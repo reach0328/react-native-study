@@ -19,7 +19,7 @@ const RootNavigation = createStackNavigator(
         }
     },
     {
-        mode:"modal"
+        mode:"card"
     }
 );
 
