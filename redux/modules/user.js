@@ -142,6 +142,50 @@ function getOwnProfile() {
     }
 }
 
+
+function followUser(userId) {
+    return (dispatch, getState) => {
+        const { user : { token }} = getState();
+        fetch(`${API_URL}/users/${userId}/follow/`, {
+            method: "POST",
+            headers: {
+                Authorization: `JWT ${token}`
+            }
+        })
+        .then(response => {
+            if(response.state === 401) {
+                dispatch(logOut());
+            } else if(response.ok) {
+                return true;
+            } else {
+                return false;
+            }
+        })
+    }
+}
+
+
+function unfollowUser(userId) {
+    return (dispatch, getState) => {
+        const { user : { token }} = getState();
+        fetch(`${API_URL}/users/${userId}/unfollow/`, {
+            method: "POST",
+            headers: {
+                Authorization: `JWT ${token}`
+            }
+        })
+            .then(response => {
+                if(response.state === 401) {
+                    dispatch(logOut());
+                } else if(response.ok) {
+                    return true;
+                } else {
+                    return false;
+                }
+            })
+    }
+}
+
 // initilal state
 const initialState = {
     isLoggedIn: false
@@ -210,7 +254,9 @@ const actionCreators = {
     facebookLogin,
     logOut,
     getNotifications,
-    getOwnProfile
+    getOwnProfile,
+    followUser,
+    unfollowUser
 };
 
 export { actionCreators };
