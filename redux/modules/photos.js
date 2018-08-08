@@ -1,5 +1,6 @@
 import { API_URL } from "../../constant";
 import { actionCreator as userAction} from "./user";
+import uuidv1 from "uuid";
 
 const SET_FEED = "SET_FEED";
 const SET_SEARCH = "SET_SEARCH";
@@ -126,6 +127,42 @@ function unlikePhoto(photoId) {
     }
 }
 
+
+function uploadPhoto(file, caption, loaction, tags) {
+
+    const tagsArray = tags.splice(",");
+    const data = new FormData();
+    data.append("caption",caption);
+    data.append("location",loaction);
+    data.append("tags",JSON.stringify(tagsArray));
+    data.append("file",{
+        uri: file,
+        type:"image/jpg",
+        name: `${uuidv1()}.jpg`
+    });
+    return (dispatch, getstate) => {
+        const { user : { token }} = getState();
+        return fetch(`${API_URL}/image/`,{
+            method:"POST",
+            headers: {
+                Authorization: `JWT ${token}`,
+                "Content-Type": "multipart/form-data"
+            },
+            body: data
+        })
+            .then(response => {
+                if(response.status === 401) {
+                    dispatch(userAction.logOut());
+                } else if(response.ok){
+                    return true;
+                } else {
+                    return false;
+                }
+            })
+    }
+}
+
+
 const initialState = {
 
 };
@@ -166,7 +203,8 @@ const actionCreators = {
     getSearch,
     likePhoto,
     unlikePhoto,
-    searchByHashtag
+    searchByHashtag,
+    uploadPhoto
 };
 
 

@@ -16,7 +16,7 @@ const NotificaionsScreen = props => (
     >
         <View style={styles.container}>
             {
-                props.notifications.length===0 && props.notifications.length > 1 ?
+                props.notifications && props.notifications.length===0 && props.notifications.length > 1 ?
                     (<Text style={styles.notFound}>No</Text>) :
                     props.notifications.map(notification =>
                         <Notification key={notification.id} {...notification}/>

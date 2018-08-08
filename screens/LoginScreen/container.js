@@ -31,9 +31,9 @@ class Container extends Component{
     _changePassword = (text) => {
         this.setState({ password : text });
     };
-    _submit = async() => {
-        const {username, password, isSubmitting} = this.state;
-        const {login} = this.props;
+    _submit = async () => {
+        const { username, password, isSubmitting } = this.state;
+        const { login } = this.props;
         if (!isSubmitting) {
             if (username && password) {
                 //submit
@@ -42,7 +42,7 @@ class Container extends Component{
                 });
                 const loginResult = await login(username, password);
                 if (!loginResult) {
-                    Alert.alert('wrong');
+                    Alert.alert('fail');
                     this.setState({
                         isSubmitting: false
                     })
